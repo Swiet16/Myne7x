@@ -1,7 +1,8 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Myne7x Collaboration</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
@@ -80,13 +81,17 @@
       margin-top: 20px;
     }
     button {
-      background: #00c6ff;
+      background: gray;
       color: white;
       font-weight: bold;
       transition: 0.3s;
+      cursor: not-allowed;
+    }
+    button:enabled {
+      background: #00c6ff;
       cursor: pointer;
     }
-    button:hover {
+    button:enabled:hover {
       background: #0079a3;
     }
     .tickIcon {
@@ -120,32 +125,52 @@
   <nav>
     <span>Agreements with Myne Winner</span>
     <img src="https://cdn-icons-png.flaticon.com/512/2950/2950643.png" alt="Verified">
-  </nav>  <div class="topSpace"></div>  <div id="loginScreen" class="screen active">
+  </nav>
+  <div class="topSpace"></div>
+
+  <div id="loginScreen" class="screen active">
     <h2>Enter Password</h2>
     <input class="input" type="password" id="mainPassword" placeholder="Enter Password...">
     <button onclick="checkMainPassword()">Enter</button>
-  </div>  <div id="adminScreen" class="screen">
+  </div>
+
+  <div id="adminScreen" class="screen">
     <h2>Admin Dashboard</h2>
     <div id="userList"></div>
-  </div>  <div id="nameInputScreen" class="screen">
+  </div>
+
+  <div id="nameInputScreen" class="screen">
     <h2>Welcome to Myne7x Portal</h2>
     <input class="input" type="text" id="userName" placeholder="Enter Your Name">
     <button onclick="startUserFlow()">Continue</button>
-  </div>  <div id="headerArea" class="screen">
+  </div>
+
+  <div id="headerArea" class="screen">
     <div class="header" id="welcomeHeader"></div>
     <div class="header" id="collabHeader"></div>
     <button onclick="startAgreements()">Start</button>
-  </div>  <div id="agreementScreen" class="screen">
+  </div>
+
+  <div id="agreementScreen" class="screen">
     <h3 id="agreementTitle" style="font-size: 1.4rem; line-height: 1.6;"></h3>
     <label><input type="checkbox" id="agreeCheck"><img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" class="tickIcon"> I Agree</label>
     <button id="nextAgreementBtn" onclick="showNextAgreement()" disabled>Next</button>
-  </div>  <div id="finalInputScreen" class="screen">
+  </div>
+
+  <div id="finalInputScreen" class="screen">
     <textarea id="userMessage" placeholder="Write 30+ words about working with Myne Winner"></textarea>
     <button id="submitBtn" disabled onclick="submitUser()">Submit</button>
-  </div>  <div id="finalScreen" class="screen">
+  </div>
+
+  <div id="finalScreen" class="screen">
     <h2 id="finalMsg"></h2>
-  </div>  <div class="footer">© 2025 Myne Winner — Myne7x Album Collaboration</div>  <script>
-    let savedUsers = JSON.parse(localStorage.getItem('myneUsers')) || [];
+  </div>
+
+  <div class="footer">© 2025 Myne Winner — Myne7x Album Collaboration</div>
+
+  <script>
+    const localKey = "myneUsers";
+    let savedUsers = JSON.parse(localStorage.getItem(localKey)) || [];
     const messages = [
       "You’re comfortable to work with Myne Winner.",
       "Whatever Winner earns, he will pay you from this album.",
@@ -153,7 +178,6 @@
       "You will be credited fully in the project.",
       "Your input will help shape the success of Myne7x."
     ];
-
     let currentAgreement = 0;
     let userName = "";
 
@@ -174,10 +198,15 @@
       document.getElementById('adminScreen').classList.add('active');
       const listDiv = document.getElementById('userList');
       listDiv.innerHTML = '<h4>Users:</h4>';
+      if (savedUsers.length === 0) {
+        listDiv.innerHTML += "<p style='opacity: 0.8;'>No submissions yet.</p>";
+      }
       savedUsers.forEach(user => {
-        listDiv.innerHTML += `<div style='margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px;'>
-          <strong>${user.name}</strong><br><em style='font-size:14px;'>${user.message}</em>
-        </div>`;
+        listDiv.innerHTML += `
+          <div style='margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px;'>
+            <strong style="font-size:16px; color:#00c6ff;">${user.name}</strong><br>
+            <em style='font-size:14px; color:white;'>${user.message}</em>
+          </div>`;
       });
     }
 
@@ -207,9 +236,13 @@
       } else {
         document.getElementById('agreementScreen').classList.remove('active');
         document.getElementById('finalInputScreen').classList.add('active');
-        document.getElementById('userMessage').addEventListener('input', () => {
-          const words = document.getElementById('userMessage').value.trim().split(/\s+/);
-          document.getElementById('submitBtn').disabled = words.length < 30;
+
+        const userMsg = document.getElementById('userMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        userMsg.addEventListener('input', () => {
+          const words = userMsg.value.trim().split(/\s+/);
+          submitBtn.disabled = words.length < 30;
         });
       }
     }
@@ -220,11 +253,14 @@
 
     function submitUser() {
       const message = document.getElementById('userMessage').value.trim();
-      savedUsers.push({ name: userName, message });
-      localStorage.setItem('myneUsers', JSON.stringify(savedUsers));
+      const newUser = { name: userName, message };
+      savedUsers.push(newUser);
+      localStorage.setItem(localKey, JSON.stringify(savedUsers));
+
       document.getElementById('finalInputScreen').classList.remove('active');
       document.getElementById('finalScreen').classList.add('active');
       document.getElementById('finalMsg').innerText = `🎉 Congratulations ${userName}! You’re now part of Myne7x Album.`;
     }
-  </script></body>
+  </script>
+</body>
 </html>
